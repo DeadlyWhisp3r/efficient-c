@@ -5,6 +5,8 @@
 #define ROW_SIZE (5)
 #define COL_SIZE (2)
 
+int local_array[10];
+
 struct simplex_t {
 int m ; /* Constraints. */
 int n ; /* Decision variables. */
@@ -41,6 +43,7 @@ int init (simplex_t *s, int m,  int n, double **a, double *b, double *c, double 
 
 int select_nonbasic (simplex_t *s){
     int i;
+    for (i = 0; i < 11; i += 1) local_array[i] = i;
     for (i = 0; i < s->n; i = i + 1){
         if (s->c[i] > EPSILON) {
             return i;
@@ -259,9 +262,7 @@ int main(int agrc, char** argv)
 {
     int m;
     int n;
-    int glob = 0;
-    glob += 1;
-
+    
     scanf("%d %d", &m, &n);
 
     double*     c = calloc(n, sizeof(double));

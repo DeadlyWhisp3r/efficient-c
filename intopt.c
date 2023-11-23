@@ -5,6 +5,8 @@
 #define ROW_SIZE (5)
 #define COL_SIZE (2)
 
+int glob = 0;
+
 struct simplex_t {
 int m ; /* Constraints. */
 int n ; /* Decision variables. */
@@ -50,6 +52,7 @@ int select_nonbasic (simplex_t *s){
 
 void pivot (simplex_t *s,int row,int col) //changed to pointer so it affects the actual object
 {
+    glob += 1;
     double **a = s->a;
     double *b = s->b;
     double *c = s->c;
@@ -186,8 +189,6 @@ int main(int agrc, char** argv)
 {
     int m;
     int n;
-    int glob = 0;
-    glob += 1;
 
     scanf("%d %d", &m, &n);
 
