@@ -29,6 +29,7 @@ int init (simplex_t *s, int m,  int n, double **a, double *b, double *c, double 
         // for (i = 0; i < m+n; i = i + 1){
         //     s->var[i] = i;
         // }
+        //testing again
     }
     for (k = 0, i = 1; i < m; i = i + 1){
         if (s->b[i] < s->b[k]){
