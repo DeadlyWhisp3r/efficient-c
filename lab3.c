@@ -116,51 +116,8 @@ void prepare (simplex_t *s, int k){
     s->n = n;
     pivot(s, k, n-1); //sent in the address of it so it modifies the actual s
 }
+double xsimplex (int m,  int n, double **a, double *b, double *c, double *x, double y, int *var, int h); //forward declaration
 
-
-double xsimplex (int m,  int n, double **a, double *b, double *c, double *x, double y, int *var, int h){
-    simplex_t s;
-    int i,row,col;
-    if (!initial(&s, m, n, a, b,c, x, y, var)){ //&s
-        free(s.var);
-        return NAN; // not a number
-    }
-    while ((col = select_nonbasic(&s)) >= 0) {
-        row = -1;
-        for (i = 0; i < m; i = i + 1){
-            if (a[i][col] > EPSILON && (row < 0 || (b[i] / a[i][col] < b[row] / a[row][col]))){
-            row = i;
-            }
-        }
-        if (row < 0){
-            free(s.var); //maybe ->?
-            return INFINITY; // unbounded
-        }
-        pivot (&s,row, col);
-    }
-    if (h==0){
-        for (i = 0; i < n; i = i + 1){
-            if (s.var[i] < n){
-                x[s.var[i]] = 0;
-            }
-        }
-        for (i = 0; i < m; i = i + 1){
-            if (s.var[n+i] < n){
-                x[s.var[n+i]] = s.b[i];
-            }
-        }
-        free(s.var);
-    }
-    else{
-        for (i = 0; i < n; i = i + 1){
-            x[i] = 0;
-        }
-        for (i = n; i < n+m; i = i + 1){
-            x[i] = s.b[i-n];
-        }
-    }
-    return s.y;
-    }
 int initial(simplex_t *s, int m,  int n, double **a, double *b, double *c, double *x, double y, int *var){
     int i,j,k;
     double w;
@@ -239,6 +196,50 @@ int initial(simplex_t *s, int m,  int n, double **a, double *b, double *c, doubl
     return 1;
     }
 
+double xsimplex (int m,  int n, double **a, double *b, double *c, double *x, double y, int *var, int h){
+    simplex_t s;
+    int i,row,col;
+    if (!initial(&s, m, n, a, b,c, x, y, var)){ //&s
+        free(s.var);
+        return NAN; // not a number
+    }
+    while ((col = select_nonbasic(&s)) >= 0) {
+        row = -1;
+        for (i = 0; i < m; i = i + 1){
+            if (a[i][col] > EPSILON && (row < 0 || (b[i] / a[i][col] < b[row] / a[row][col]))){
+            row = i;
+            }
+        }
+        if (row < 0){
+            free(s.var); //maybe ->?
+            return INFINITY; // unbounded
+        }
+        pivot (&s,row, col);
+    }
+    if (h==0){
+        for (i = 0; i < n; i = i + 1){
+            if (s.var[i] < n){
+                x[s.var[i]] = 0;
+            }
+        }
+        for (i = 0; i < m; i = i + 1){
+            if (s.var[n+i] < n){
+                x[s.var[n+i]] = s.b[i];
+            }
+        }
+        free(s.var);
+    }
+    else{
+        for (i = 0; i < n; i = i + 1){
+            x[i] = 0;
+        }
+        for (i = n; i < n+m; i = i + 1){
+            x[i] = s.b[i-n];
+        }
+    }
+    return s.y;
+    }
+
 double simplex (int m,  int n, double **a, double *b, double *c, double *x, double y){
     return xsimplex (m,n,a,b,c,x,y,NULL,0);
 }
@@ -277,7 +278,7 @@ int main(int agrc, char** argv)
         }
     }
     //scan in the right hand side of the system (b)
-    for (int i=0 ; i<n; i+=1){
+    for (int i=0 ; i<m; i+=1){ //changed to m since that is the number of constraints
         scanf("%lf", &b[i]);
     }
     printf("max z = ");
@@ -293,7 +294,7 @@ int main(int agrc, char** argv)
             if (j<n-1) printf(" + ");
         }
         printf("<=");
-        printf("%10.3lf\n", b[i]);
+        printf("%10.3lf\n", b[i]); //here the m was already chosen
     }
 
     printf("hejsan \n");
@@ -310,5 +311,6 @@ int main(int agrc, char** argv)
     free(a);
     free(b);
     free(c);
+    free(x);
     return 0;
 }
