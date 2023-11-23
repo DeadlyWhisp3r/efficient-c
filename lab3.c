@@ -26,7 +26,7 @@ int init (simplex_t *s, int m,  int n, double **a, double *b, double *c, double 
     if (s->var == NULL){
         s->var =  calloc(m+n+1, sizeof(int));
         // s->var =  malloc((m+n+1)* sizeof(int));
-        for (i = 0; i < m+n; i = i + 1){
+        for (i; i < m+n; i = i + 1){
             s->var[i] = i;
         }
     }
