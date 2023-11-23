@@ -24,10 +24,11 @@ int init (simplex_t *s, int m,  int n, double **a, double *b, double *c, double 
     //*s = (simplex_t) {s->m=m,s->n=n,s->var=var,s->a=a,s->b=b,s->x=x,s->c=c,s->y=y}; // assign each attribute
     *s=(simplex_t){m,n,var,a,b,x,c,y};
     if (s->var == NULL){
-        s->var =  calloc(m+n+1, sizeof(int));
-        for (i = 0; i < m+n; i = i + 1){
-            s->var[i] = i;
-        }
+        //s->var =  calloc(m+n+1, sizeof(int));
+        s->var =  malloc((m+n+1)* sizeof(int));
+        // for (i = 0; i < m+n; i = i + 1){
+        //     s->var[i] = i;
+        // }
     }
     for (k = 0, i = 1; i < m; i = i + 1){
         if (s->b[i] < s->b[k]){
