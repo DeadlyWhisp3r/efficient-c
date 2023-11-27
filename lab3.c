@@ -4,7 +4,6 @@
 #define EPSILON 1e-6
 #define ROW_SIZE (5)
 #define COL_SIZE (2)
-
 int local_array[10];
 
 struct simplex_t {
@@ -28,7 +27,8 @@ int init (simplex_t *s, int m,  int n, double **a, double *b, double *c, double 
     if (s->var == NULL){
         s->var =  calloc(m+n+1, sizeof(int));
         // s->var =  malloc((m+n+1)* sizeof(int));
-        for (i; i < m+n; i = i + 1){
+        //remove i (= 0) for assignment 6
+        for (i = 0; i < m+n; i = i + 1){
             s->var[i] = i;
         }
     }
@@ -43,7 +43,7 @@ int init (simplex_t *s, int m,  int n, double **a, double *b, double *c, double 
 
 int select_nonbasic (simplex_t *s){
     int i;
-    for (i = 0; i < 11; i += 1) local_array[i] = i;
+        for (i = 0; i < 11; i += 1) local_array[i] = i;
     for (i = 0; i < s->n; i = i + 1){
         if (s->c[i] > EPSILON) {
             return i;
@@ -133,7 +133,7 @@ int initial(simplex_t *s, int m,  int n, double **a, double *b, double *c, doubl
     n = s->n;
     s->y = xsimplex(m, n, s->a, s->b, s->c, s->x, 0, s->var,1);
     for (i = 0; i < m+n; i = i + 1) {
-        if (s->var[i] = m+n-1){
+        if (s->var[i] == m+n-1){
             if (abs(s->x[i]) > EPSILON) {
                 free(s->x);
                 free(s->c);
@@ -156,12 +156,16 @@ int initial(simplex_t *s, int m,  int n, double **a, double *b, double *c, doubl
     }
     if (i < n-1){
         // xn+m is nonbasic and not last. swap columns i and n-1
-        k = s->var[i]; s->var[i] = s->var[n-1]; s->var[n-1] = k;
+        k = s->var[i]; 
+        s->var[i] = s->var[n-1];
+        s->var[n-1] = k;
         for (k = 0; k < m; k = k + 1){
-            w = s->a[k][n-1]; s->a[k][n-1] = s->a[k][i]; s->a[k][i] = w;
+            w = s->a[k][n-1];
+            s->a[k][n-1] = s->a[k][i];
+            s->a[k][i] = w;
         }
     }
-    else
+    else{}
         // xn+m is nonbasic and last. forget it.
     free(s->c);
     s->c = c;
@@ -173,23 +177,23 @@ int initial(simplex_t *s, int m,  int n, double **a, double *b, double *c, doubl
     double *t = calloc(n,sizeof(double));
     for (k = 0; k < n; k = k + 1) {
         for (j = 0; j < n; j = j + 1){
-            if (k = s->var[j]){
+            if (k == s->var[j]){
                 // xk is nonbasic. add ck
                 t[j] = t[j] + s->c[k];
                 goto next_k;
             }
+        }
         // xk is basic.
         for (j = 0; j < m; j = j + 1){
-            if (s->var[n+j] = k){
+            if (s->var[n+j] == k){
             // xk is at row j
-            break;
+                break;
             }
         }
         s->y = s->y + s->c[k] * s->b[j];
         for (i = 0; i < n; i = i + 1){
             t[i] = t[i] - s->c[k] * s->a[j][i];
         }
-    }
     next_k:;
     }
     for (i = 0; i < n; i = i + 1){
@@ -267,7 +271,7 @@ int main(int agrc, char** argv)
 
     double*     c = calloc(n, sizeof(double));
     double*     b = calloc(m, sizeof(double));
-    double**    a = make_matrix(m,n);
+    double**    a = make_matrix(m,n+1);
 
     //scan in all the c coefficients for the max/min solution
     for (int i=0 ; i<n ; i+=1){
